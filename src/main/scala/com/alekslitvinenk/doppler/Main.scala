@@ -2,6 +2,7 @@ package com.alekslitvinenk.doppler
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import com.alekslitvinenk.logshingles.dsl.ShinglesDirectives._
@@ -19,9 +20,13 @@ object Main extends App {
   private val interface = Try(args(0)).getOrElse("127.0.0.1")
   private val port = Try(args(1).toInt).getOrElse(8080)
 
-  val route =
+  private val route =
     extractHost { host =>
-      getFromResourceDirectory(host)
+      pathSingleSlash {
+        redirect("index.html", StatusCodes.PermanentRedirect)
+      } ~ {
+        getFromResourceDirectory(host)
+      }
     }
 
   Http().bindAndHandle(sqlShingle(logbackShingle(route)), interface, port)
