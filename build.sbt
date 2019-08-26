@@ -19,7 +19,8 @@ lazy val root = (project in file("."))
       "org.scalamock" %% "scalamock" % "4.1.0" % Test,
     ),
 
-    unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/resources" }
+    unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/resources" },
+    excludeFilter := HiddenFileFilter -- ".well-known"
   )
 
 addCommandAlias(

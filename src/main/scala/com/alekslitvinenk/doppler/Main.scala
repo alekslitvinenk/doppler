@@ -22,12 +22,20 @@ object Main extends App {
 
   private val route =
     extractHost { host =>
+      val hostParts = host.split('.')
+      val redirectHost = if (hostParts.length == 3 && hostParts(0) == "www")
+        hostParts.drop(1).mkString(".")
+      else
+        host
+
       pathSingleSlash {
         redirect("index.html", StatusCodes.PermanentRedirect)
       } ~ {
-        getFromResourceDirectory(host)
+        getFromResourceDirectory(s"hosts/$redirectHost")
       }
     }
 
-  Http().bindAndHandle(sqlShingle(logbackShingle(route)), interface, port)
+  private val shingledRoute = sqlShingle(logbackShingle(route))
+
+  Http().bindAndHandle(shingledRoute, interface, port)
 }
