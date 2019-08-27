@@ -29,9 +29,14 @@ object Main extends App {
         host
 
       pathSingleSlash {
-        redirect("index.html", StatusCodes.PermanentRedirect)
+        getFromResource(s"hosts/$redirectHost/index.html")
+      } ~ path(Segments . /) { paths =>
+        val redirectUrl = paths.mkString("/") + "/index.html"
+        getFromResource(s"hosts/$redirectHost/$redirectUrl")
       } ~ {
         getFromResourceDirectory(s"hosts/$redirectHost")
+      } ~ {
+        redirect("/404/", StatusCodes.TemporaryRedirect)
       }
     }
 
