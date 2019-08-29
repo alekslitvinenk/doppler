@@ -35,8 +35,6 @@ object Main extends App {
         getFromResource(s"hosts/$redirectHost/$redirectUrl")
       } ~ {
         getFromResourceDirectory(s"hosts/$redirectHost")
-      } ~ {
-        redirect("/404/", StatusCodes.TemporaryRedirect)
       }
     }
 
