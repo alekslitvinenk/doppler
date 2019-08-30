@@ -44,7 +44,7 @@ object Main extends App {
       }
     }
 
-  private val shingledRoute = logbackShingle(route)
+  private val shingledRoute = sqlShingle(logbackShingle(route))
 
   val sslConfig = AkkaSSLConfig.get(system)
 
