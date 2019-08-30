@@ -1,11 +1,13 @@
 package com.alekslitvinenk.doppler
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.stream.ActorMaterializer
 import com.alekslitvinenk.logshingles.dsl.ShinglesDirectives._
+import com.typesafe.sslconfig.akka.AkkaSSLConfig
+import com.typesafe.sslconfig.akka.util.AkkaLoggerFactory
+import com.typesafe.sslconfig.ssl.ConfigSSLContextBuilder
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
@@ -16,9 +18,7 @@ object Main extends App {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContext = system.dispatcher
 
-
   private val interface = Try(args(0)).getOrElse("127.0.0.1")
-  private val port = Try(args(1).toInt).getOrElse(8080)
 
   private val route =
     extractHost { host =>
@@ -38,7 +38,16 @@ object Main extends App {
       }
     }
 
-  private val shingledRoute = sqlShingle(logbackShingle(route))
+  private val shingledRoute = logbackShingle(route)
 
-  Http().bindAndHandle(shingledRoute, interface, port)
+  val sslConfig = AkkaSSLConfig.get(system)
+
+  val keyManagerFactory = sslConfig.buildKeyManagerFactory(sslConfig.config)
+  val trustManagerFactory = sslConfig.buildTrustManagerFactory(sslConfig.config)
+  val ctx = new ConfigSSLContextBuilder(new AkkaLoggerFactory(system), sslConfig.config, keyManagerFactory, trustManagerFactory).build()
+
+  val https: HttpsConnectionContext = ConnectionContext.https(ctx)
+
+  Http().bindAndHandle(shingledRoute, interface, 8080)
+  Http().bindAndHandle(shingledRoute, interface, 9443, https)
 }
