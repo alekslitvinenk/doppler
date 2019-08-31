@@ -1,7 +1,9 @@
 package com.alekslitvinenk.doppler
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.model.{StatusCodes, Uri}
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.stream.ActorMaterializer
 import com.alekslitvinenk.logshingles.dsl.ShinglesDirectives._
@@ -19,6 +21,10 @@ object Main extends App {
   implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val interface = Try(args(0)).getOrElse("127.0.0.1")
+
+  private val httpsRedirectRoute: Route = extractUri(redirectHttps)
+  private def redirectHttps(uri: Uri): Route = redirect(toHttps(uri), StatusCodes.PermanentRedirect)
+  private def toHttps(uri: Uri): Uri = uri.copy(scheme = "https")
 
   private val route =
     extractHost { host =>
@@ -38,7 +44,7 @@ object Main extends App {
       }
     }
 
-  private val shingledRoute = logbackShingle(route)
+  private val shingledRoute = sqlShingle(logbackShingle(route))
 
   val sslConfig = AkkaSSLConfig.get(system)
 
@@ -48,6 +54,6 @@ object Main extends App {
 
   val https: HttpsConnectionContext = ConnectionContext.https(ctx)
 
-  Http().bindAndHandle(shingledRoute, interface, 8080)
+  Http().bindAndHandle(httpsRedirectRoute, interface, 8080)
   Http().bindAndHandle(shingledRoute, interface, 9443, https)
 }
