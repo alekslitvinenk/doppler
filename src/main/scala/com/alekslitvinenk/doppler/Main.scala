@@ -47,7 +47,7 @@ object Main extends App {
       }
     }
 
-  private val shingledRoute = logbackShingle(route)
+  private val shingledRoute = sqlShingle(logbackShingle(route))
 
   val sslConfig = AkkaSSLConfig.get(system)
 
@@ -57,6 +57,6 @@ object Main extends App {
 
   val https: HttpsConnectionContext = ConnectionContext.https(ctx)
 
-  Http().bindAndHandle(shingledRoute, interface, 8080)
+  Http().bindAndHandle(httpsRedirectRoute, interface, 8080)
   Http().bindAndHandle(shingledRoute, interface, 9443, https)
 }
