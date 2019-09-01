@@ -26,6 +26,9 @@ object Main extends App {
   private def redirectHttps(uri: Uri): Route = redirect(toHttps(uri), StatusCodes.PermanentRedirect)
   private def toHttps(uri: Uri): Uri = uri.copy(scheme = "https")
 
+  private val baseDir = sys.env.getOrElse("WWW_DIR", "/var/www/hosts")
+  private val hostsDir = s"$baseDir/hosts"
+
   private val route =
     extractHost { host =>
       val hostParts = host.split('.')
@@ -35,12 +38,12 @@ object Main extends App {
         host
 
       pathSingleSlash {
-        getFromResource(s"hosts/$redirectHost/index.html")
+        getFromFile(s"$hostsDir/$redirectHost/index.html")
       } ~ path(Segments . /) { paths =>
         val redirectUrl = paths.mkString("/") + "/index.html"
-        getFromResource(s"hosts/$redirectHost/$redirectUrl")
+        getFromFile(s"$hostsDir/$redirectHost/$redirectUrl")
       } ~ {
-        getFromResourceDirectory(s"hosts/$redirectHost")
+        getFromDirectory(s"$hostsDir/$redirectHost")
       }
     }
 
