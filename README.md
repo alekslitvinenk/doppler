@@ -8,7 +8,7 @@ docker run -d \
 --rm \
 -e APP_LOG_APPENDER=rollingFile \
 -e DB_HOST=??? \
--v /opt/doppler/hosts:/var/www/hosts \
+-v /opt/doppler:/var/www/hosts \
 alekslitvinenk/doppler \
  0.0.0.0
 ```
