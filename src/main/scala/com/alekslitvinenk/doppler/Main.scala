@@ -6,7 +6,6 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.stream.ActorMaterializer
-import com.alekslitvinenk.logshingles.dsl.ShinglesDirectives._
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import com.typesafe.sslconfig.akka.util.AkkaLoggerFactory
 import com.typesafe.sslconfig.ssl.ConfigSSLContextBuilder
@@ -47,8 +46,6 @@ object Main extends App {
       }
     }
 
-  private val shingledRoute = sqlShingle(logbackShingle(route))
-
   val sslConfig = AkkaSSLConfig.get(system)
 
   val keyManagerFactory = sslConfig.buildKeyManagerFactory(sslConfig.config)
@@ -58,5 +55,5 @@ object Main extends App {
   val https: HttpsConnectionContext = ConnectionContext.https(ctx)
 
   Http().bindAndHandle(httpsRedirectRoute, interface, 8080)
-  Http().bindAndHandle(shingledRoute, interface, 9443, https)
+  Http().bindAndHandle(route, interface, 9443, https)
 }
