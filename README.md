@@ -1,4 +1,5 @@
 # 💧 Doppler
+[![Build Status](https://travis-ci.org/alekslitvinenk/doppler.svg?branch=master)](https://travis-ci.org/alekslitvinenk/doppler)
 
 ## To run
 ```bash
@@ -6,8 +7,6 @@ docker run -d \
 -p 80:8080 \
 -p 443:9443 \
 --rm \
--e APP_LOG_APPENDER=rollingFile \
--e DB_HOST=??? \
 -v /opt/doppler:/var/www/hosts \
 alekslitvinenk/doppler \
  0.0.0.0
