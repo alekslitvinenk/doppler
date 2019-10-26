@@ -1,14 +1,9 @@
 package com.alekslitvinenk.doppler
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{StatusCodes, Uri}
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.{ConnectionContext, Http, HttpsConnectionContext}
 import akka.stream.ActorMaterializer
-import com.typesafe.sslconfig.akka.AkkaSSLConfig
-import com.typesafe.sslconfig.akka.util.AkkaLoggerFactory
-import com.typesafe.sslconfig.ssl.ConfigSSLContextBuilder
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
@@ -21,9 +16,10 @@ object Main extends App {
 
   private val interface = Try(args(0)).getOrElse("127.0.0.1")
 
-  private val httpsRedirectRoute: Route = extractUri(redirectHttps)
+  // TODO: Enable when issues/12 is done
+  /*private val httpsRedirectRoute: Route = extractUri(redirectHttps)
   private def redirectHttps(uri: Uri): Route = redirect(toHttps(uri), StatusCodes.PermanentRedirect)
-  private def toHttps(uri: Uri): Uri = uri.copy(scheme = "https")
+  private def toHttps(uri: Uri): Uri = uri.copy(scheme = "https")*/
 
   private val baseDir = sys.env.getOrElse("WWW_DIR", "/var/www/hosts")
   private val hostsDir = s"$baseDir/hosts"
@@ -46,14 +42,15 @@ object Main extends App {
       }
     }
 
-  val sslConfig = AkkaSSLConfig.get(system)
+  // TODO: Enable when issues/12 is done
+  /*val sslConfig = AkkaSSLConfig.get(system)
 
   val keyManagerFactory = sslConfig.buildKeyManagerFactory(sslConfig.config)
   val trustManagerFactory = sslConfig.buildTrustManagerFactory(sslConfig.config)
   val ctx = new ConfigSSLContextBuilder(new AkkaLoggerFactory(system), sslConfig.config, keyManagerFactory, trustManagerFactory).build()
 
-  val https: HttpsConnectionContext = ConnectionContext.https(ctx)
+  val https: HttpsConnectionContext = ConnectionContext.https(ctx)*/
 
-  Http().bindAndHandle(httpsRedirectRoute, interface, 8080)
-  Http().bindAndHandle(route, interface, 9443, https)
+  Http().bindAndHandle(route, interface, 8080)
+  //Http().bindAndHandle(route, interface, 9443, https)
 }
