@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-slf4j" % "2.5.24",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.scalatest" %% "scalatest" % "3.0.8" % Test,
-      "org.scalamock" %% "scalamock" % "4.1.0" % Test,
+      "org.scalamock" %% "scalamock" % "4.4.0" % Test,
     ),
 
     unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/resources" },
