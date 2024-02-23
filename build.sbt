@@ -6,7 +6,7 @@ lazy val root = (project in file("."))
     version := "0.1",
     scalaVersion := "2.12.8",
 
-    mainClass in (Compile, run) := Some("com.alekslitvinenk.doppler.Main"),
+    (Compile / run / mainClass) := Some("com.alekslitvinenk.doppler.Main"),
 
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http" % "10.1.11",
@@ -18,7 +18,7 @@ lazy val root = (project in file("."))
       "org.scalamock" %% "scalamock" % "4.4.0" % Test,
     ),
 
-    unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/resources" },
+    (Compile / unmanagedResourceDirectories) += { baseDirectory.value / "src/main/resources" },
     excludeFilter := HiddenFileFilter -- ".well-known"
   )
 
