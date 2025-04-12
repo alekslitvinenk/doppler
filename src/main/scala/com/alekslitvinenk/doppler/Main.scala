@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.stream.ActorMaterializer
 import com.alekslitvinenk.doppler.directive._
 import com.alekslitvinenk.doppler.util.Utils.getHostToRouteMap
 
@@ -15,7 +14,6 @@ object Main extends App {
 
   implicit val system: ActorSystem = ActorSystem("my-system")
   implicit val executionContext: ExecutionContext = system.dispatcher
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   
   private val log = system.log
   
@@ -30,7 +28,7 @@ object Main extends App {
   private val route =
     redirectToNoWwwHost {
       redirectToNoTrailingSlash {
-        resolveHostRoute(hostsMap)
+        encodeResponse(resolveHostRoute(hostsMap))
       }
     }
   
