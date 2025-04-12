@@ -1,12 +1,20 @@
 
+val circeVersion = "0.14.12"
+
+val circeLibs = Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
+
 lazy val root = (project in file("."))
   .settings(
     organization := "com.alekslitvinenk",
     name := "doppler",
     version := "0.1",
-    scalaVersion := "2.12.8",
-
-    mainClass in (Compile, run) := Some("com.alekslitvinenk.doppler.Main"),
+    scalaVersion := "2.13.16",
+    
+    //Compile / mainClass := Some("com.alekslitvinenk.doppler.Main"),
 
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http" % "10.1.11",
@@ -16,9 +24,9 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.scalatest" %% "scalatest" % "3.1.0" % Test,
       "org.scalamock" %% "scalamock" % "4.4.0" % Test,
-    ),
-
-    unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/resources" },
+    ) ++ circeLibs,
+    
+    Compile / unmanagedResourceDirectories += { baseDirectory.value / "src/main/resources" },
     excludeFilter := HiddenFileFilter -- ".well-known"
   )
 
