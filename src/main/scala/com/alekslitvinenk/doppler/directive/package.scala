@@ -2,14 +2,13 @@ package com.alekslitvinenk.doppler
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server._
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Directives.{redirectToNoTrailingSlashIfPresent, _}
+
+import scala.collection.concurrent.TrieMap
 
 package object directive {
-  //type PageRoute = Directive1[String]
   
-  //def getHostPageRoute(host: String): PageRoute = getFromFile(s"$host")
-  
-  def redirectToNoWwwIfPresent: Directive0 = extractUri.flatMap { uri =>
+  val redirectToNoWwwHost: Directive0 = extractUri.flatMap { uri =>
     val host = uri.authority.host.address()
     
     if (host.startsWith("www.")) {
@@ -20,4 +19,14 @@ package object directive {
       pass
     }
   }
+  
+  val redirectToNoTrailingSlash: Directive0 = redirectToNoTrailingSlashIfPresent(StatusCodes.MovedPermanently)
+  
+  def resolveHostRoute(map: TrieMap[String, Route]): Route =
+    extractHost { host =>
+      map.get(host) match {
+        case Some(value) => value
+        case None => reject
+      }
+    }
 }
