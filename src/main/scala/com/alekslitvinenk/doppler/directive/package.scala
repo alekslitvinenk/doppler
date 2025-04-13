@@ -22,7 +22,7 @@ package object directive {
   
   val redirectToNoTrailingSlash: Directive0 = redirectToNoTrailingSlashIfPresent(StatusCodes.MovedPermanently)
   
-  def resolveHostRoute(map: TrieMap[String, Route]): Route =
+  def getHostRoute(map: TrieMap[String, Route]): Route =
     extractHost { host =>
       map.get(host) match {
         case Some(value) => value

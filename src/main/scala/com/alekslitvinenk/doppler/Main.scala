@@ -2,7 +2,6 @@ package com.alekslitvinenk.doppler
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.alekslitvinenk.doppler.directive._
 import com.alekslitvinenk.doppler.util.Utils.getHostToRouteMap
@@ -28,7 +27,7 @@ object Main extends App {
   private val route =
     redirectToNoWwwHost {
       redirectToNoTrailingSlash {
-        encodeResponse(resolveHostRoute(hostsMap))
+        getHostRoute(hostsMap)
       }
     }
   

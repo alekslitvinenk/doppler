@@ -31,12 +31,12 @@ object Utils {
       .map(_.path.stripSuffix("/").stripPrefix("/"))
       .filter(!_.isBlank)
     
-    val hostPagesRoute = pages.foldLeft(pathSingleSlash {
+    val pagesRoute = pages.foldLeft(pathSingleSlash {
       getFromFile(s"$hostPathStr/index.html")
     }) { (route, pagePath) =>
-      val pageSegments = pagePath.split("/").toList
-      val headSegment = PathMatcher(pageSegments.head :: AkkaPath.Empty, ())
-      val pathMatcher = pageSegments.tail.foldLeft(headSegment) { (pm, s) =>
+      val pathSegments = pagePath.split("/").toList
+      val headSegment = PathMatcher(pathSegments.head :: AkkaPath.Empty, ())
+      val pathMatcher = pathSegments.tail.foldLeft(headSegment) { (pm, s) =>
         pm / s
       }
       
@@ -49,8 +49,10 @@ object Utils {
     
     host(hostName) {
       get {
-        hostPagesRoute ~ {
-          getFromDirectory(hostPathStr)
+        encodeResponse {
+          pagesRoute ~ {
+            getFromDirectory(hostPathStr)
+          }
         }
       }
     }
