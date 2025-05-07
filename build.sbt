@@ -22,7 +22,7 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.11",
       "com.typesafe.akka" %% "akka-slf4j" % "2.6.3",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "org.scalatest" %% "scalatest" % "3.1.0" % Test,
+      "org.scalatest" %% "scalatest" % "3.1.4" % Test,
       "org.scalamock" %% "scalamock" % "4.4.0" % Test,
     ) ++ circeLibs,
     
