@@ -1,8 +1,8 @@
 package com.alekslitvinenk.doppler
 
-import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server._
-import akka.http.scaladsl.server.Directives.{redirectToNoTrailingSlashIfPresent, _}
+import org.apache.pekko.http.scaladsl.model.StatusCodes
+import org.apache.pekko.http.scaladsl.server.Directives._
+import org.apache.pekko.http.scaladsl.server.{Directive0, Route}
 
 import scala.collection.concurrent.TrieMap
 

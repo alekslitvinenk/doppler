@@ -1,10 +1,10 @@
 package com.alekslitvinenk.doppler
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Route
 import com.alekslitvinenk.doppler.directive._
 import com.alekslitvinenk.doppler.util.Utils.getHostToRouteMap
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.server.Route
 
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.ExecutionContext
@@ -18,7 +18,6 @@ object Main extends App {
   
   private val interface = sys.env.getOrElse("BIND_INTERFACE", "0.0.0.0")
   private val baseDir = sys.env.getOrElse("WWW_DIR", "/var/www/hosts")
-  //private val baseDir = sys.env.getOrElse("WWW_DIR", "/Users/aleksandrlitvinenko/dummy-hosts")
   
   private val hostsDir = s"$baseDir/hosts"
   
@@ -31,7 +30,7 @@ object Main extends App {
       }
     }
   
-  private val bindingFuture = Http().bindAndHandle(route, interface, 8080)
+  private val bindingFuture = Http().newServerAt(interface, 8080).bind(route)
   
   sys.addShutdownHook {
     bindingFuture

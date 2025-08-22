@@ -1,11 +1,11 @@
 package com.alekslitvinenk.doppler.util
 
-import akka.http.scaladsl.model.Uri.{Path => AkkaPath}
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{PathMatcher, Route}
 import com.alekslitvinenk.doppler.domain.GatsbyPageData
 import io.circe.generic.auto._
 import io.circe.parser.decode
+import org.apache.pekko.http.scaladsl.model.Uri.{Path => PekkoPath}
+import org.apache.pekko.http.scaladsl.server.Directives._
+import org.apache.pekko.http.scaladsl.server.{PathMatcher, Route}
 
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
@@ -35,7 +35,7 @@ object Utils {
       getFromFile(s"$hostPathStr/index.html")
     }) { (route, pagePath) =>
       val pathSegments = pagePath.split("/").toList
-      val headSegment = PathMatcher(pathSegments.head :: AkkaPath.Empty, ())
+      val headSegment = PathMatcher(pathSegments.head :: PekkoPath.Empty, ())
       val pathMatcher = pathSegments.tail.foldLeft(headSegment) { (pm, s) =>
         pm / s
       }
